@@ -24,6 +24,9 @@ resource "aws_internet_gateway" "gw" {
 
 resource "aws_eip" "eip" {
   domain = "vpc"
+  # tags = {
+  #   Name = "${local.name}"
+  # }
 }
 
 resource "aws_nat_gateway" "main" {
@@ -85,6 +88,15 @@ resource "aws_subnet" "database" {
       Name = "${local.name}-database-${local.az_names[count.index]}"
     }
   )
+}
+
+resource "aws_db_subnet_group" "default" { # if we want to do it manually go to Amazon RDS
+  name       = "${local.name}"
+  subnet_ids = [aws_subnet.database[*].id]
+
+  tags = {
+    Name = "${local.name}"
+  }
 }
 
 # route table
